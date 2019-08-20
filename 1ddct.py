@@ -51,7 +51,8 @@ def main():
 
     for key in data:
         data[key] = data[key].map(scale, num_parallel_calls=16)
-        data[key] = data[key].map(augment, num_parallel_calls=16)
+        if key == 'train':
+            data[key] = data[key].map(augment, num_parallel_calls=16)
         data[key] = data[key].map(dct, num_parallel_calls=16)
 
     # Input

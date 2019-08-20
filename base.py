@@ -46,7 +46,8 @@ def main():
 
     for key in data:
         data[key] = data[key].map(scale, num_parallel_calls=16)
-        data[key] = data[key].map(augment, num_parallel_calls=16)
+        if key == 'train':
+            data[key] = data[key].map(augment, num_parallel_calls=16)
 
     # Input
     inputs = keras.layers.Input((32, 32, 3))
@@ -180,7 +181,7 @@ def main():
     file_result = open('result.csv', mode='a')
     file_result.write('epochs,train_loss,train_acc,test_loss,test_acc\n')
 
-    EPOCHS = 250
+    EPOCHS = 500
 
     for epoch in range(EPOCHS):
         for image, label in data['train']:
