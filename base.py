@@ -40,9 +40,8 @@ def main():
 
     def augment(image, label):
         image = tf.image.random_brightness(image, 0.15)
-        image = tf.image.random_contrast(image, 0.0, 0.2)
+        image = tf.image.random_contrast(image, -0.1, 0.2)
         image = tf.image.random_flip_left_right(image)
-        image = tf.image.random_crop(image, (BATCH_SIZE, 28, 28, 3))
         return image, label
 
     for key in data:
@@ -50,7 +49,7 @@ def main():
         data[key] = data[key].map(augment, num_parallel_calls=16)
 
     # Input
-    inputs = keras.layers.Input((28, 28, 3))
+    inputs = keras.layers.Input((32, 32, 3))
     x = inputs
 
     # Entry Flow
