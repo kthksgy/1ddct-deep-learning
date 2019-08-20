@@ -14,53 +14,6 @@ print('Keras Version: ', keras.__version__)
 # tf.debugging.set_log_device_placement(True)
 
 
-class XceptionModified(keras.Model):
-    def __init__(self):
-        super(XceptionModified, self).__init__()
-        self.bn = keras.layers.normalization.BatchNormalization()
-        self.relu = keras.layers.ReLU()
-        self.mp3_2 = keras.layers.MaxPool2D(3, 2)
-        self.gap = keras.layers.GlobalAveragePooling2D()
-        self.flatten = keras.layers.Flatten()
-
-        self.entry_conv1 = keras.layers.Conv2D(32, 3, 2, activation='relu')
-        self.entry_conv2 = keras.layers.Conv2D(64, 3, 2, activation='relu')
-
-        self.entry_sepconv1 = keras.layers.SeparableConv2D(128, 3, activation='relu')
-        self.entry_sepconv2 = keras.layers.SeparableConv2D(128, 3)
-
-        self.entry_conv3 = keras.layers.Conv2D(128, 1, 2)
-
-        self.entry_sepconv3 = keras.layers.SeparableConv2D(256, 3)
-        self.entry_sepconv4 = keras.layers.SeparableConv2D(256, 3)
-
-        self.entry_conv4 = keras.layers.Conv2D(256, 1, 2)
-
-        self.entry_sepconv5 = keras.layers.SeparableConv2D(728, 3)
-        self.entry_sepconv6 = keras.layers.SeparableConv2D(728, 3)
-
-        self.entry_conv5 = keras.layers.Conv2D(728, 1, 2)
-
-        self.middle_flow = []
-
-        for i in range(8):
-            middle_flow.append([
-                keras.layers.SeparableConv2D(728, 3, name='middle_sepconv1_%d' % (i + 1)),
-                keras.layers.SeparableConv2D(728, 3, name='middle_sepconv2_%d' % (i + 1)),
-                keras.layers.SeparableConv2D(728, 3, name='middle_sepconv3_%d' % (i + 1)),
-            ])
-
-        self.exit_sepconv1 = keras.layers.SeparableConv2D(728, 3)
-        self.exit_sepconv2 = keras.layers.SeparableConv2D(1024, 3)
-
-        self.exit_conv1 = keras.layers.Conv2D(1024, 1, 2)
-
-        self.exit_sepconv3 = keras.layers.SeparableConv2D(1536, 3)
-        self.exit_sepconv4 = keras.layers.SeparableConv2D(2048, 3)
-
-        self.fc = keras.layers.Dense(10, activation='softmax')
-
-
 def main():
     dataset_name = 'cifar10'
     load_kwargs = {
