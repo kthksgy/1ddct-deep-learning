@@ -7,14 +7,15 @@ import tensorflow_datasets as tfds
 import numpy as np
 from tensorflow import keras
 
-print('Python Version: ', sys.version)
-print('TensorFlow Version: ', tf.__version__)
-print('Keras Version: ', keras.__version__)
-
-# tf.debugging.set_log_device_placement(True)
-
 
 def main():
+    np.random.seed(12345678)
+    tf.random.set_seed(12345678)
+    print('Python Version: ', sys.version)
+    print('TensorFlow Version: ', tf.__version__)
+    print('Keras Version: ', keras.__version__)
+
+    # tf.debugging.set_log_device_placement(True)
     dataset_name = 'cifar10'
     BATCH_SIZE = 1000
     load_kwargs = {
@@ -41,7 +42,7 @@ def main():
         image = tf.image.random_brightness(image, 0.15)
         image = tf.image.random_contrast(image, 0.0, 0.2)
         image = tf.image.random_flip_left_right(image)
-        image = tf.image.random_crop(image, (28, 28, 3))
+        image = tf.image.random_crop(image, (BATCH_SIZE, 28, 28, 3))
         return image, label
 
     for key in data:
@@ -49,7 +50,7 @@ def main():
         data[key] = data[key].map(augment, num_parallel_calls=16)
 
     # Input
-    inputs = keras.layers.Input(shape=info.features['image'].shape)
+    inputs = keras.layers.Input((28, 28, 3))
     x = inputs
 
     # Entry Flow
