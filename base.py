@@ -19,7 +19,7 @@ def main():
     load_kwargs = {
         'split': None,
         'batch_size': 1000,
-        'data_dir': r"W:\dataset",
+        'data_dir': r"~/.datasets",
         'in_memory': True,
         'download': True,
         'as_supervised': True,
@@ -90,7 +90,7 @@ def main():
         for test_image, test_label in data['test']:
             test_step(test_image, test_label)
 
-        template = 'Epoch {:03}, Loss: {:.5f}, Accuracy: {:.4f}, Test Loss: {:.5f}, Test Accuracy: {:.4f}'
+        template = 'Epoch {:0%d}, Loss: {:.5f}, Accuracy: {:.4f}, Test Loss: {:.5f}, Test Accuracy: {:.4f}' % len(str(EPOCHS))
         print(
             template.format(
                 epoch + 1,
@@ -100,7 +100,7 @@ def main():
                 test_accuracy.result()
             )
         )
-        result_line = '{:03},{:.5f},{:.4f},{:.5f},{:.4f}\n'
+        result_line = '{:0%d},{:.5f},{:.4f},{:.5f},{:.4f}\n' % len(str(EPOCHS))
         file_result.write(
             result_line.format(
                 epoch + 1,
