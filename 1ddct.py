@@ -5,7 +5,6 @@ import sys
 import tensorflow as tf
 import tensorflow_datasets as tfds
 import numpy as np
-from scipy import fftpack
 from tensorflow import keras
 
 print('Python Version: ', sys.version)

@@ -93,7 +93,7 @@ def main():
         template = 'Epoch {:03}, Loss: {:.5f}, Accuracy: {:.4f}, Test Loss: {:.5f}, Test Accuracy: {:.4f}'
         print(
             template.format(
-                epoch+1,
+                epoch + 1,
                 train_loss.result(),
                 train_accuracy.result(),
                 test_loss.result(),
@@ -103,7 +103,7 @@ def main():
         result_line = '{:03},{:.5f},{:.4f},{:.5f},{:.4f}\n'
         file_result.write(
             result_line.format(
-                epoch+1,
+                epoch + 1,
                 train_loss.result(),
                 train_accuracy.result(),
                 test_loss.result(),
