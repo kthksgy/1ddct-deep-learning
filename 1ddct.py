@@ -48,8 +48,16 @@ def main():
         reshaped = tf.reshape(dcted, (BATCH_SIZE, height, -1))
         return reshaped, label
 
+    def augment(image, label):
+        image = tf.image.random_brightness(image, 0.15)
+        image = tf.image.random_contrast(image, 0.1, 0.1)
+        image = tf.image.random_flip_left_right(image)
+        image = tf.image.random_crop(image, (28, 28, 3))
+        return image, label
+
     for key in data:
-        data[key] = data[key].map(cast_image, num_parallel_calls=16)
+        data[key] = data[key].map(scale, num_parallel_calls=16)
+        data[key] = data[key].map(augment, num_parallel_calls=16)
         data[key] = data[key].map(dct, num_parallel_calls=16)
 
     # Input
@@ -184,7 +192,7 @@ def main():
     file_result = open('result.csv', mode='a')
     file_result.write('epochs,train_loss,train_acc,test_loss,test_acc\n')
 
-    EPOCHS = 1000
+    EPOCHS = 250
 
     for epoch in range(EPOCHS):
         for image, label in data['train']:
@@ -196,7 +204,7 @@ def main():
         template = 'Epoch {:0%d}, Loss: {:.5f}, Accuracy: {:.4f}, Test Loss: {:.5f}, Test Accuracy: {:.4f}' % len(str(EPOCHS))
         print(
             template.format(
-                epoch+1,
+                epoch + 1,
                 train_loss.result(),
                 train_accuracy.result(),
                 test_loss.result(),
@@ -206,7 +214,7 @@ def main():
         result_line = '{:0%d},{:.5f},{:.4f},{:.5f},{:.4f}\n' % len(str(EPOCHS))
         file_result.write(
             result_line.format(
-                epoch+1,
+                epoch + 1,
                 train_loss.result(),
                 train_accuracy.result(),
                 test_loss.result(),

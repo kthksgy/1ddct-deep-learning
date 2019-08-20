@@ -32,13 +32,21 @@ def main():
     data, info = tfds.load(dataset_name, **load_kwargs)
     width, height, channels = info.features['image'].shape
 
-    def cast_image(image, label):
+    def scale(image, label):
         image = tf.cast(image, tf.float32)
         image /= 255.0
         return image, label
 
+    def augment(image, label):
+        image = tf.image.random_brightness(image, 0.15)
+        image = tf.image.random_contrast(image, 0.1, 0.1)
+        image = tf.image.random_flip_left_right(image)
+        image = tf.image.random_crop(image, (28, 28, 3))
+        return image, label
+
     for key in data:
-        data[key] = data[key].map(cast_image, num_parallel_calls=16)
+        data[key] = data[key].map(scale, num_parallel_calls=16)
+        data[key] = data[key].map(augment, num_parallel_calls=16)
 
     # Input
     inputs = keras.layers.Input(shape=info.features['image'].shape)
@@ -172,7 +180,7 @@ def main():
     file_result = open('result.csv', mode='a')
     file_result.write('epochs,train_loss,train_acc,test_loss,test_acc\n')
 
-    EPOCHS = 1000
+    EPOCHS = 250
 
     for epoch in range(EPOCHS):
         for image, label in data['train']:
