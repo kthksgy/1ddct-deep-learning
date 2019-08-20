@@ -39,10 +39,12 @@ def main():
     for key in data:
         data[key] = data[key].map(cast_image, num_parallel_calls=16)
 
+    # Input
     inputs = keras.layers.Input(shape=(32, 32, 3))
     x = inputs
 
-    x = keras.layers.Conv2D(32, 3)(x)
+    # Entry Flow
+    x = keras.layers.Conv2D(32, 3, 2)(x)
     x = keras.layers.BatchNormalization()(x)
     x = keras.layers.ReLU()(x)
 
@@ -94,6 +96,7 @@ def main():
 
     x = keras.layers.Add()([x, res])
 
+    # Middle Flow
     for i in range(8):
         res = x
         x = keras.layers.SeparableConv2D(728, 3, padding='same', name='middle_sepconv1_%d' % (i + 1))(x)
@@ -104,6 +107,7 @@ def main():
         x = keras.layers.BatchNormalization()(x)
         x = keras.layers.Add()([x, res])
 
+    # Exit Flow
     res = keras.layers.Conv2D(1024, 1, 2, padding='valid')(x)
     res = keras.layers.BatchNormalization()(res)
 
