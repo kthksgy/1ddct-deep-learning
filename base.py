@@ -93,52 +93,52 @@ def main():
     x = inputs
 
     x = keras.layers.Conv2D(32, 3, 2)(x)
-    x = keras.layers.normalization.BatchNormalization()(x)
+    x = keras.layers.BatchNormalization()(x)
     x = keras.layers.ReLU()(x)
 
     x = keras.layers.Conv2D(64, 3, 2)(x)
-    x = keras.layers.normalization.BatchNormalization()(x)
+    x = keras.layers.BatchNormalization()(x)
     x = keras.layers.ReLU()(x)
 
     res = keras.layers.Conv2D(128, 1, 2)(x)
-    res = keras.layers.normalization.BatchNormalization()(res)
+    res = keras.layers.BatchNormalization()(res)
 
     x = keras.layers.SeparableConv2D(128, 3)(x)
-    x = keras.layers.normalization.BatchNormalization()(x)
+    x = keras.layers.BatchNormalization()(x)
 
     x = keras.layers.ReLU()(x)
     x = keras.layers.SeparableConv2D(128, 3)(x)
-    x = keras.layers.normalization.BatchNormalization()(x)
+    x = keras.layers.BatchNormalization()(x)
 
     x = keras.layers.MaxPool2D(3, 2)(x)
 
     x = keras.layers.Add()([x, res])
 
     res = keras.layers.Conv2D(256, 1, 2)(x)
-    res = keras.layers.normalization.BatchNormalization()(res)
+    res = keras.layers.BatchNormalization()(res)
 
     x = keras.layers.ReLU()(x)
     x = keras.layers.SeparableConv2D(256, 3)(x)
-    x = keras.layers.normalization.BatchNormalization()(x)
+    x = keras.layers.BatchNormalization()(x)
 
     x = keras.layers.ReLU()(x)
     x = keras.layers.SeparableConv2D(256, 3)(x)
-    x = keras.layers.normalization.BatchNormalization()(x)
+    x = keras.layers.BatchNormalization()(x)
 
     x = keras.layers.MaxPool2D(3, 2)(x)
 
     x = keras.layers.Add()([x, res])
 
     res = keras.layers.Conv2D(728, 1, 2)(x)
-    res = keras.layers.normalization.BatchNormalization()(res)
+    res = keras.layers.BatchNormalization()(res)
 
     x = keras.layers.ReLU()(x)
     x = keras.layers.SeparableConv2D(728, 3)(x)
-    x = keras.layers.normalization.BatchNormalization()(x)
+    x = keras.layers.BatchNormalization()(x)
 
     x = keras.layers.ReLU()(x)
     x = keras.layers.SeparableConv2D(728, 3)(x)
-    x = keras.layers.normalization.BatchNormalization()(x)
+    x = keras.layers.BatchNormalization()(x)
 
     x = keras.layers.MaxPool2D(3, 2)(x)
 
@@ -147,34 +147,34 @@ def main():
     for i in range(8):
         res = x
         x = keras.layers.SeparableConv2D(728, 3, name='middle_sepconv1_%d' % (i + 1))(x)
-        x = keras.layers.normalization.BatchNormalization()(x)
+        x = keras.layers.BatchNormalization()(x)
         x = keras.layers.SeparableConv2D(728, 3, name='middle_sepconv2_%d' % (i + 1))(x)
-        x = keras.layers.normalization.BatchNormalization()(x)
+        x = keras.layers.BatchNormalization()(x)
         x = keras.layers.SeparableConv2D(728, 3, name='middle_sepconv3_%d' % (i + 1))(x)
-        x = keras.layers.normalization.BatchNormalization()(x)
+        x = keras.layers.BatchNormalization()(x)
         x = keras.layers.Add()([x, res])
 
     res = keras.layers.Conv2D(1024, 1, 2)(x)
-    res = keras.layers.normalization.BatchNormalization()(res)
+    res = keras.layers.BatchNormalization()(res)
 
     x = keras.layers.ReLU()(x)
     x = keras.layers.SeparableConv2D(728, 3)(x)
-    x = keras.layers.normalization.BatchNormalization()(x)
+    x = keras.layers.BatchNormalization()(x)
 
     x = keras.layers.ReLU()(x)
     x = keras.layers.SeparableConv2D(1024, 3)(x)
-    x = keras.layers.normalization.BatchNormalization()(x)
+    x = keras.layers.BatchNormalization()(x)
 
     x = keras.layers.MaxPool2D(3, 2)(x)
 
     x = keras.layers.Add()([x, res])
 
     x = keras.layers.SeparableConv2D(1536, 3)(x)
-    x = keras.layers.normalization.BatchNormalization()(x)
+    x = keras.layers.BatchNormalization()(x)
     x = keras.layers.ReLU()(x)
 
     x = keras.layers.SeparableConv2D(2048, 3)(x)
-    x = keras.layers.normalization.BatchNormalization()(x)
+    x = keras.layers.BatchNormalization()(x)
     x = keras.layers.ReLU()(x)
 
     x = keras.layers.GlobalAveragePooling2D()(x)
