@@ -52,31 +52,128 @@ def main():
         data[key] = data[key].map(cast_image, num_parallel_calls=16)
         data[key] = data[key].map(dct, num_parallel_calls=16)
 
-    model = keras.Sequential([
-        keras.layers.InputLayer((height, DCT_N * channels)),
-        keras.layers.Conv1D(64, 3, padding='same', activation='relu'),
-        keras.layers.Conv1D(64, 3, padding='same', activation='relu'),
-        keras.layers.MaxPool1D(2),
-        keras.layers.Conv1D(128, 3, padding='same', activation='relu'),
-        keras.layers.Conv1D(128, 3, padding='same', activation='relu'),
-        keras.layers.MaxPool1D(2),
-        keras.layers.Conv1D(256, 3, padding='same', activation='relu'),
-        keras.layers.Conv1D(256, 3, padding='same', activation='relu'),
-        keras.layers.Conv1D(256, 1, padding='same', activation='relu'),
-        keras.layers.MaxPool1D(2),
-        keras.layers.Conv1D(512, 3, padding='same', activation='relu'),
-        keras.layers.Conv1D(512, 3, padding='same', activation='relu'),
-        keras.layers.Conv1D(512, 1, padding='same', activation='relu'),
-        keras.layers.MaxPool1D(2),
-        keras.layers.Conv1D(512, 3, padding='same', activation='relu'),
-        keras.layers.Conv1D(512, 3, padding='same', activation='relu'),
-        keras.layers.Conv1D(512, 1, padding='same', activation='relu'),
-        keras.layers.MaxPool1D(2),
-        keras.layers.Flatten(),
-        keras.layers.Dense(4096, activation='relu'),
-        keras.layers.Dense(4096, activation='relu'),
-        keras.layers.Dense(info.features['label'].num_classes, activation='softmax')
-    ], name='vgg16_1d')
+    # Input
+    inputs = keras.layers.Input(shape=(height, DCT_N * channels))
+    x = inputs
+
+    # Entry Flow
+    x = keras.layers.Conv1D(32, 3, 2)(x)
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.ReLU()(x)
+
+    x = keras.layers.Conv1D(64, 3)(x)
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.ReLU()(x)
+
+    res = keras.layers.Conv1D(128, 1, 2, padding='valid')(x)
+    res = keras.layers.BatchNormalization()(res)
+
+    x = keras.layers.SeparableConv1D(128, 3, padding='same')(x)
+    x = keras.layers.BatchNormalization()(x)
+
+    x = keras.layers.ReLU()(x)
+    x = keras.layers.SeparableConv1D(128, 3, padding='same')(x)
+    x = keras.layers.BatchNormalization()(x)
+
+    x = keras.layers.MaxPool1D(3, 2, padding='same')(x)
+
+    x = keras.layers.Add()([x, res])
+
+    res = keras.layers.Conv1D(256, 1, 2, padding='valid')(x)
+    res = keras.layers.BatchNormalization()(res)
+
+    x = keras.layers.ReLU()(x)
+    x = keras.layers.SeparableConv1D(256, 3, padding='same')(x)
+    x = keras.layers.BatchNormalization()(x)
+
+    x = keras.layers.ReLU()(x)
+    x = keras.layers.SeparableConv1D(256, 3, padding='same')(x)
+    x = keras.layers.BatchNormalization()(x)
+
+    x = keras.layers.MaxPool1D(3, 2, padding='same')(x)
+
+    x = keras.layers.Add()([x, res])
+
+    res = keras.layers.Conv1D(728, 1, 2, padding='valid')(x)
+    res = keras.layers.BatchNormalization()(res)
+
+    x = keras.layers.ReLU()(x)
+    x = keras.layers.SeparableConv1D(728, 3, padding='same')(x)
+    x = keras.layers.BatchNormalization()(x)
+
+    x = keras.layers.ReLU()(x)
+    x = keras.layers.SeparableConv1D(728, 3, padding='same')(x)
+    x = keras.layers.BatchNormalization()(x)
+
+    x = keras.layers.MaxPool1D(3, 2, padding='same')(x)
+
+    x = keras.layers.Add()([x, res])
+
+    # Middle Flow
+    for i in range(8):
+        res = x
+        x = keras.layers.SeparableConv1D(728, 3, padding='same', name='middle_sepconv1_%d' % (i + 1))(x)
+        x = keras.layers.BatchNormalization()(x)
+        x = keras.layers.SeparableConv1D(728, 3, padding='same', name='middle_sepconv2_%d' % (i + 1))(x)
+        x = keras.layers.BatchNormalization()(x)
+        x = keras.layers.SeparableConv1D(728, 3, padding='same', name='middle_sepconv3_%d' % (i + 1))(x)
+        x = keras.layers.BatchNormalization()(x)
+        x = keras.layers.Add()([x, res])
+
+    # Exit Flow
+    res = keras.layers.Conv1D(1024, 1, 2, padding='valid')(x)
+    res = keras.layers.BatchNormalization()(res)
+
+    x = keras.layers.ReLU()(x)
+    x = keras.layers.SeparableConv1D(728, 3, padding='same')(x)
+    x = keras.layers.BatchNormalization()(x)
+
+    x = keras.layers.ReLU()(x)
+    x = keras.layers.SeparableConv1D(1024, 3, padding='same')(x)
+    x = keras.layers.BatchNormalization()(x)
+
+    x = keras.layers.MaxPool1D(3, 2, padding='same')(x)
+
+    x = keras.layers.Add()([x, res])
+
+    x = keras.layers.SeparableConv1D(1536, 3, padding='same')(x)
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.ReLU()(x)
+
+    x = keras.layers.SeparableConv1D(2048, 3, padding='same')(x)
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.ReLU()(x)
+
+    x = keras.layers.GlobalAveragePooling1D()(x)
+
+    outputs = keras.layers.Dense(info.features['label'].num_classes, activation='softmax')(x)
+
+    # model = keras.Sequential([
+    #     keras.layers.InputLayer((height, DCT_N * channels)),
+    #     keras.layers.Conv1D(64, 3, padding='same', activation='relu'),
+    #     keras.layers.Conv1D(64, 3, padding='same', activation='relu'),
+    #     keras.layers.MaxPool1D(2),
+    #     keras.layers.Conv1D(128, 3, padding='same', activation='relu'),
+    #     keras.layers.Conv1D(128, 3, padding='same', activation='relu'),
+    #     keras.layers.MaxPool1D(2),
+    #     keras.layers.Conv1D(256, 3, padding='same', activation='relu'),
+    #     keras.layers.Conv1D(256, 3, padding='same', activation='relu'),
+    #     keras.layers.Conv1D(256, 1, padding='same', activation='relu'),
+    #     keras.layers.MaxPool1D(2),
+    #     keras.layers.Conv1D(512, 3, padding='same', activation='relu'),
+    #     keras.layers.Conv1D(512, 3, padding='same', activation='relu'),
+    #     keras.layers.Conv1D(512, 1, padding='same', activation='relu'),
+    #     keras.layers.MaxPool1D(2),
+    #     keras.layers.Conv1D(512, 3, padding='same', activation='relu'),
+    #     keras.layers.Conv1D(512, 3, padding='same', activation='relu'),
+    #     keras.layers.Conv1D(512, 1, padding='same', activation='relu'),
+    #     keras.layers.MaxPool1D(2),
+    #     keras.layers.Flatten(),
+    #     keras.layers.Dense(4096, activation='relu'),
+    #     keras.layers.Dense(4096, activation='relu'),
+    #     keras.layers.Dense(info.features['label'].num_classes, activation='softmax')
+    # ], name='vgg16_1ddct')
+    model = keras.Model(inputs=inputs, outputs=outputs)
     model.summary()
 
     loss_object = keras.losses.SparseCategoricalCrossentropy()

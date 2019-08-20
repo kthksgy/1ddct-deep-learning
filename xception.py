@@ -16,9 +16,10 @@ print('Keras Version: ', keras.__version__)
 
 def main():
     dataset_name = 'cifar10'
+    BATCH_SIZE = 1000
     load_kwargs = {
         'split': None,
-        'batch_size': 1000,
+        'batch_size': BATCH_SIZE,
         'data_dir': r"~/.datasets",
         'in_memory': True,
         'download': True,
@@ -40,7 +41,7 @@ def main():
         data[key] = data[key].map(cast_image, num_parallel_calls=16)
 
     # Input
-    inputs = keras.layers.Input(shape=(32, 32, 3))
+    inputs = keras.layers.Input(shape=info.features['image'].shape)
     x = inputs
 
     # Entry Flow
