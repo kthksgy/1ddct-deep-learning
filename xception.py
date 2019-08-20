@@ -136,22 +136,6 @@ def main():
 
     outputs = keras.layers.Dense(info.features['label'].num_classes, activation='softmax')(x)
 
-    # model = keras.applications.vgg16.VGG16(
-    #     include_top=True,
-    #     weights=None,
-    #     input_tensor=None,
-    #     input_shape=[32, 32, 3],
-    #     pooling=None,
-    #     classes=info.features['label'].num_classes
-    # )
-    # model = keras.applications.xception.Xception(
-    #     include_top=True,
-    #     weights=None,
-    #     input_tensor=None,
-    #     input_shape=info.features['image'].shape,
-    #     pooling=None,
-    #     classes=info.features['label'].num_classes
-    # )
     model = keras.Model(inputs=inputs, outputs=outputs)
     model.summary()
 

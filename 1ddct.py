@@ -148,31 +148,6 @@ def main():
 
     outputs = keras.layers.Dense(info.features['label'].num_classes, activation='softmax')(x)
 
-    # model = keras.Sequential([
-    #     keras.layers.InputLayer((height, DCT_N * channels)),
-    #     keras.layers.Conv1D(64, 3, padding='same', activation='relu'),
-    #     keras.layers.Conv1D(64, 3, padding='same', activation='relu'),
-    #     keras.layers.MaxPool1D(2),
-    #     keras.layers.Conv1D(128, 3, padding='same', activation='relu'),
-    #     keras.layers.Conv1D(128, 3, padding='same', activation='relu'),
-    #     keras.layers.MaxPool1D(2),
-    #     keras.layers.Conv1D(256, 3, padding='same', activation='relu'),
-    #     keras.layers.Conv1D(256, 3, padding='same', activation='relu'),
-    #     keras.layers.Conv1D(256, 1, padding='same', activation='relu'),
-    #     keras.layers.MaxPool1D(2),
-    #     keras.layers.Conv1D(512, 3, padding='same', activation='relu'),
-    #     keras.layers.Conv1D(512, 3, padding='same', activation='relu'),
-    #     keras.layers.Conv1D(512, 1, padding='same', activation='relu'),
-    #     keras.layers.MaxPool1D(2),
-    #     keras.layers.Conv1D(512, 3, padding='same', activation='relu'),
-    #     keras.layers.Conv1D(512, 3, padding='same', activation='relu'),
-    #     keras.layers.Conv1D(512, 1, padding='same', activation='relu'),
-    #     keras.layers.MaxPool1D(2),
-    #     keras.layers.Flatten(),
-    #     keras.layers.Dense(4096, activation='relu'),
-    #     keras.layers.Dense(4096, activation='relu'),
-    #     keras.layers.Dense(info.features['label'].num_classes, activation='softmax')
-    # ], name='vgg16_1ddct')
     model = keras.Model(inputs=inputs, outputs=outputs)
     model.summary()
 
