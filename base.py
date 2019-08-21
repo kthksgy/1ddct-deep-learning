@@ -40,7 +40,7 @@ def main():
 
     def augment(image, label):
         image = tf.image.random_brightness(image, 0.15)
-        image = tf.image.random_contrast(image, -0.1, 0.2)
+        image = tf.image.random_contrast(image, 0.0, 0.2)
         image = tf.image.random_flip_left_right(image)
         return image, label
 
